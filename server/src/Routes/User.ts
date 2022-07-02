@@ -56,13 +56,14 @@ router.post('/account/register', async (req, res) => {
       const hashedPassword = await argon.hash(password);
       await pool
         .query(
-          'insert into accounts (name, email, password, color) values ($1, $2, $3, $4);',
+          'insert into accounts (name, email, password, color) values ($1, $2, $3, $4) returning *',
           [name, email, hashedPassword, color]
         )
-        .then(() => {
+        .then((item) => {
           const response: Response = {
             status: 'success',
             msg: 'user registred successfully',
+            data: item.rows,
           };
           res.send(response);
         })

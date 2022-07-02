@@ -1,11 +1,13 @@
 import Express from 'express';
 
 import User from './Routes/User';
+import DailyTransactions from './Routes/DailyTransactions';
 
 // MIDDLEWARES
 const app = Express();
 app.use(Express.json());
 app.use(User);
+app.use(DailyTransactions);
 
 export interface Response {
   status: 'success' | 'unsuccessful';

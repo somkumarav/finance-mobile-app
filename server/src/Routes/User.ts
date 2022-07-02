@@ -88,7 +88,7 @@ router.post('/account/login', async (req, res) => {
   try {
     const { getemail, getpassword } = req.body;
     const checkForAccount = await pool.query(
-      'select * from accounts where email=$1;',
+      'select * from accounts where email=$1',
       [getemail]
     );
 

@@ -7,16 +7,29 @@ const router = Express.Router();
 // Add A Transaction
 router.post('/daily/add', async (req, res) => {
   try {
+    console.log('hello');
     const { email, payee, remitter, note, amount, date } = req.body;
-    await pool.query(
-      'insert into daily_transactions (email, payee, remitter, note, amount, date) values ($1, $2, $3, $4, $5, $6)',
-      [email, payee, remitter, note, amount, date]
-    );
-    const response: Response = {
-      status: 'success',
-      msg: 'item added',
-    };
-    res.send(response);
+    await pool
+      .query(
+        'insert into daily_transactions (email, payee, remitter, note, amount, date) values ($1, $2, $3, $4, $5, $6) returning *',
+        [email, payee, remitter, note, amount, date]
+      )
+      .then((item) => {
+        const response: Response = {
+          status: 'success',
+          msg: 'item added',
+          data: item.rows[0],
+        };
+        res.send(response);
+      })
+      .catch((err) => {
+        console.log(err);
+        const response: Response = {
+          status: 'unsuccessful',
+          msg: err.message,
+        };
+        res.send(response);
+      });
   } catch (err) {
     const response: Response = {
       status: 'unsuccessful',
@@ -71,16 +84,19 @@ router.delete('/daily/delete/:id', async (req, res) => {
 });
 
 // Get All Transaction
-router.get('/daily/getall', async (_req, res) => {
+router.post('/daily/getall', async (req, res) => {
   try {
-    await pool.query('select * from daily_transactions').then((item) => {
-      const response: Response = {
-        status: 'success',
-        msg: 'all items retrived',
-        data: item.rows,
-      };
-      res.send(response);
-    });
+    const { email } = req.body;
+    await pool
+      .query('select * from daily_transactions where email=$1', [email])
+      .then((item) => {
+        const response: Response = {
+          status: 'success',
+          msg: 'all items retrived',
+          data: item.rows,
+        };
+        res.send(response);
+      });
   } catch (err) {
     const response: Response = {
       status: 'unsuccessful',

@@ -3,14 +3,16 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Providers } from './src/Providers';
 
 export default function App() {
-  return <Providers />;
+  return (
+    <View style={styles.container}>
+      <StatusBar style="light" />
+      <Providers />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });

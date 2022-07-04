@@ -3,7 +3,7 @@ import { ToastAndroid } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-type User = null | {
+export type User = null | {
   id: number;
   name: string;
   email: string;
@@ -50,6 +50,7 @@ export const AuthProvider: React.FC<AuthProvider> = ({ children }) => {
         user,
         login: async (email: string, password: string) => {
           try {
+            console.log('login');
             const res = await axios.post(
               'http://192.168.0.181:5000/account/login',
               {
@@ -61,7 +62,7 @@ export const AuthProvider: React.FC<AuthProvider> = ({ children }) => {
             setUser(res.data.data);
             await AsyncStorage.setItem('user', JSON.stringify(res.data.data));
           } catch (err: any) {
-            console.log(err.message);
+            console.log(err);
             return null;
           }
         },

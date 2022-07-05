@@ -11,12 +11,10 @@ router.get('/account/get/:id', async (req, res) => {
       .query('select * from accounts where id=$1;', [id])
       .then((item) => {
         const { id, name, email, color } = item.rows[0];
-        const user = { id, name, email, color };
-
         const response: Response = {
           status: 'success',
           msg: 'user found',
-          data: user,
+          data: { id, name, email, color },
         };
         res.send(response);
       })
@@ -60,10 +58,11 @@ router.post('/account/register', async (req, res) => {
           [name, email, hashedPassword, color]
         )
         .then((item) => {
+          const { id, name, email, color } = item.rows[0];
           const response: Response = {
             status: 'success',
             msg: 'user registred successfully',
-            data: item.rows,
+            data: { id, name, email, color },
           };
           res.send(response);
         })

@@ -38,6 +38,8 @@ export const AuthContext = createContext<{
 export const AuthProvider: React.FC<AuthProvider> = ({ children }) => {
   const [user, setUser] = useState<User>(null);
 
+  console.log(user);
+
   useEffect(() => {
     AsyncStorage.getItem('user').then((item) => {
       setUser(JSON.parse(item!));
@@ -82,7 +84,7 @@ export const AuthProvider: React.FC<AuthProvider> = ({ children }) => {
                 color,
               })
               .then((res) => {
-                console.log(res.data);
+                console.log(res.data.data);
                 showToast(res.data.msg);
                 setUser(res.data.data);
                 AsyncStorage.setItem('user', JSON.stringify(res.data.data));

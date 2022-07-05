@@ -34,7 +34,7 @@ export const Register = ({
 
   const handleRegister = () => {
     if (
-      user.name.length > 3 &&
+      user.name.length > 2 &&
       user.email.length > 5 &&
       user.password.length > 5
     ) {

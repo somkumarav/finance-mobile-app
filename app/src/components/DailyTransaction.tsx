@@ -13,7 +13,6 @@ type User = {
 };
 
 interface DailyHeader {
-  user: User;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -22,8 +21,8 @@ interface Modal {
   setAllData: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const DailyHeader: React.FC<DailyHeader> = ({ user, setShowModal }) => {
-  const { logout } = useContext(AuthContext);
+const DailyHeader: React.FC<DailyHeader> = ({ setShowModal }) => {
+  const { user, logout } = useContext(AuthContext);
   return (
     <View style={styles.header}>
       <Pressable onPress={logout}>
@@ -36,7 +35,7 @@ const DailyHeader: React.FC<DailyHeader> = ({ user, setShowModal }) => {
               textAlign: 'center',
             }}
           >
-            {user?.name.toString().substring(0, 1)}
+            {user?.name.substring(0, 1)}
           </Text>
         </View>
       </Pressable>
@@ -150,7 +149,7 @@ export const DailyTransactions = () => {
       {showModal && (
         <Modal setShowModal={setShowModal} setAllData={setAllData} />
       )}
-      <DailyHeader setShowModal={setShowModal} user={user!} />
+      <DailyHeader setShowModal={setShowModal} />
       <DailyMain allData={allData} />
     </View>
   );

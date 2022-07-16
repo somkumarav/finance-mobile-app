@@ -3,6 +3,7 @@ import cors from 'cors';
 
 import User from './Routes/User';
 import DailyTransactions from './Routes/DailyTransactions';
+const PORT = process.env.PORT || 5000;
 
 // MIDDLEWARES
 const app = Express();
@@ -22,6 +23,6 @@ app.get('/hello', (_req, res) => {
   res.send('hello');
 });
 
-app.listen(5000, () => {
-  console.log('server started at http://localhost:5000');
+app.listen(PORT, () => {
+  console.log(`server started at 5000`);
 });

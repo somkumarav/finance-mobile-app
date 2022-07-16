@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, TextInput } from 'react-native';
-import { AuthContext } from '../AuthProvider';
+import { AuthContext, ipAddress } from '../AuthProvider';
 import { DailyMain } from './DailyMain';
 import { getRandomColor } from './Register';
 
@@ -51,19 +51,22 @@ const DailyHeader: React.FC<DailyHeader> = ({ setShowModal }) => {
 };
 
 const Modal: React.FC<Modal> = ({ setShowModal, setAllData }) => {
-  const [modalData, setModalData] = useState({ to: '', note: '', amount: 0 });
-
+  const [modalData, setModalData] = useState({
+    to: '',
+    note: '',
+    amount: '',
+  });
   const { user } = useContext(AuthContext);
 
   const handleAdd = async () => {
     setShowModal((prev) => !prev);
     await axios
-      .post('http://192.168.0.181:5000/daily/add', {
+      .post(`http://${ipAddress}:5000/daily/add`, {
         email: user?.email,
         payee: getRandomColor(),
         remitter: modalData.to,
         note: modalData.note,
-        amount: modalData.amount,
+        amount: parseInt(modalData.amount),
         date: '12 Feb 2022, Mon 12:52 PM',
       })
       .then((item) => {
@@ -73,8 +76,18 @@ const Modal: React.FC<Modal> = ({ setShowModal, setAllData }) => {
   };
 
   return (
-    <View style={modalStyles.modalContainer}>
-      <View style={modalStyles.modalContent}>
+    <Pressable
+      style={modalStyles.modalContainer}
+      onPress={() => {
+        setShowModal(false);
+      }}
+    >
+      <Pressable
+        style={modalStyles.modalContent}
+        onPress={(e) => {
+          e.stopPropagation();
+        }}
+      >
         <View style={modalStyles.textInputBox}>
           <TextInput
             value={modalData.to}
@@ -101,12 +114,12 @@ const Modal: React.FC<Modal> = ({ setShowModal, setAllData }) => {
 
         <View style={modalStyles.textInputBox}>
           <TextInput
-            value={modalData.amount.toString()}
+            value={modalData.amount}
             onChangeText={(text) => {
-              setModalData({ ...modalData, amount: parseInt(text) });
+              setModalData({ ...modalData, amount: text });
             }}
             placeholder="Amount"
-            keyboardType="numbers-and-punctuation"
+            keyboardType="numeric"
             placeholderTextColor="rgba(255,255,255,0.5)"
             style={{ color: '#ffffff' }}
           />
@@ -119,20 +132,19 @@ const Modal: React.FC<Modal> = ({ setShowModal, setAllData }) => {
         >
           <Text style={{ color: '#ffffff' }}>Add</Text>
         </Pressable>
-      </View>
-    </View>
+      </Pressable>
+    </Pressable>
   );
 };
 
 export const DailyTransactions = () => {
   const [allData, setAllData] = useState([]);
-  const [showModal, setShowModal] =
-    useState<React.SetStateAction<boolean>>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
   const { user } = useContext(AuthContext);
 
   const getAllData = async () => {
     await axios
-      .post('http://192.168.0.181:5000/daily/getall', {
+      .post(`http://${ipAddress}:5000/daily/getall`, {
         email: user?.email,
       })
       .then((item) => {

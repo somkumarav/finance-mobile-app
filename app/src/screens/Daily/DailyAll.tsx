@@ -1,16 +1,11 @@
-import axios from 'axios';
-import { useContext, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Pressable, TextInput } from 'react-native';
-import { AuthContext, ipAddress } from '../AuthProvider';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useState } from 'react';
+import { useContext } from 'react';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { AuthContext } from '../../AuthProvider';
+import { DailyParamList } from './Daily';
 import { DailyMain } from './DailyMain';
-import { getRandomColor } from './Register';
-
-type User = {
-  id: number;
-  name: string;
-  email: string;
-  color: string;
-};
+import { DailyContext } from './DailyProvider';
 
 interface DailyHeader {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,61 +13,19 @@ interface DailyHeader {
 
 interface Modal {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setAllData: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const DailyHeader: React.FC<DailyHeader> = ({ setShowModal }) => {
-  const { user, logout } = useContext(AuthContext);
-  return (
-    <View style={styles.header}>
-      <Pressable onPress={logout}>
-        <View style={[styles.icon, { backgroundColor: user?.color }]}>
-          <Text
-            style={{
-              color: '#ffffff',
-              fontSize: 30,
-              fontWeight: 'bold',
-              textAlign: 'center',
-            }}
-          >
-            {user?.name.substring(0, 1)}
-          </Text>
-        </View>
-      </Pressable>
-      <Pressable
-        onPress={() => {
-          setShowModal((prev) => !prev);
-        }}
-      >
-        <Text style={{ color: '#ffffff', fontSize: 40 }}>+</Text>
-      </Pressable>
-    </View>
-  );
-};
-
-const Modal: React.FC<Modal> = ({ setShowModal, setAllData }) => {
+const Modal: React.FC<Modal> = ({ setShowModal }) => {
   const [modalData, setModalData] = useState({
     to: '',
     note: '',
     amount: '',
   });
-  const { user } = useContext(AuthContext);
+  const { addData } = useContext(DailyContext);
 
   const handleAdd = async () => {
     setShowModal((prev) => !prev);
-    await axios
-      .post(`http://${ipAddress}:5000/daily/add`, {
-        email: user?.email,
-        payee: getRandomColor(),
-        remitter: modalData.to,
-        note: modalData.note,
-        amount: parseInt(modalData.amount),
-        date: '12 Feb 2022, Mon 12:52 PM',
-      })
-      .then((item) => {
-        setAllData((prev: any) => [...prev, item.data.data]);
-        console.log(item.data.data);
-      });
+    addData(modalData);
   };
 
   return (
@@ -137,32 +90,49 @@ const Modal: React.FC<Modal> = ({ setShowModal, setAllData }) => {
   );
 };
 
-export const DailyTransactions = () => {
-  const [allData, setAllData] = useState([]);
+const DailyHeader: React.FC<DailyHeader> = ({ setShowModal }) => {
+  const { user, logout } = useContext(AuthContext);
+
+  return (
+    <View style={styles.header}>
+      <Pressable onPress={logout}>
+        <View style={[styles.icon, { backgroundColor: user?.color }]}>
+          <Text
+            style={{
+              color: '#ffffff',
+              fontSize: 30,
+              fontWeight: 'bold',
+              textAlign: 'center',
+            }}
+          >
+            {user?.name.substring(0, 1)}
+          </Text>
+        </View>
+      </Pressable>
+      <Pressable
+        onPress={() => {
+          setShowModal((prev) => !prev);
+        }}
+      >
+        <Text style={{ color: '#ffffff', fontSize: 40 }}>+</Text>
+      </Pressable>
+    </View>
+  );
+};
+
+export const DailyAll = ({
+  navigation,
+}: {
+  navigation: NativeStackNavigationProp<DailyParamList, 'All'>;
+}) => {
+  const { allData } = useContext(DailyContext);
   const [showModal, setShowModal] = useState<boolean>(false);
-  const { user } = useContext(AuthContext);
-
-  const getAllData = async () => {
-    await axios
-      .post(`http://${ipAddress}:5000/daily/getall`, {
-        email: user?.email,
-      })
-      .then((item) => {
-        setAllData(item.data.data);
-      });
-  };
-
-  useEffect(() => {
-    getAllData();
-  }, []);
 
   return (
     <View style={styles.DailyTransactions}>
-      {showModal && (
-        <Modal setShowModal={setShowModal} setAllData={setAllData} />
-      )}
+      {showModal && <Modal setShowModal={setShowModal} />}
       <DailyHeader setShowModal={setShowModal} />
-      <DailyMain allData={allData} />
+      <DailyMain allData={allData} navigation={navigation} />
     </View>
   );
 };

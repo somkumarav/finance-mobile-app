@@ -55,7 +55,7 @@ export const Login = ({
         style={styles.button}
         onPress={handleLogin}
       >
-        <Text style={{ color: '#ffffff', fontWeight: 'bold' }}>sing in</Text>
+        <Text style={{ color: '#ffffff', fontWeight: 'bold' }}>sign in</Text>
       </Pressable>
 
       <Pressable

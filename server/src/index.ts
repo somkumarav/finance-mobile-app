@@ -18,9 +18,21 @@ export interface Response {
   data?: any;
 }
 
+export const getDateFormated = () => {
+  const currentTime = new Date();
+  return `${currentTime.toLocaleString('en-IN', {
+    dateStyle: 'medium',
+  })}, ${currentTime.toLocaleString('en-IN', {
+    weekday: 'short',
+  })} ${currentTime.toLocaleString('en-IN', {
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true,
+  })}`;
+};
+
 app.get('/hello', (_req, res) => {
-  console.log('hello');
-  res.send('hello');
+  res.send(`Hello it's ${getDateFormated()}`);
 });
 
 app.listen(PORT, () => {

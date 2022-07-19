@@ -1,6 +1,6 @@
 import Express from 'express';
 import { pool } from '../db';
-import { Response } from '../index';
+import { getDateFormated, Response } from '../index';
 
 const router = Express.Router();
 
@@ -8,7 +8,8 @@ const router = Express.Router();
 router.post('/daily/add', async (req, res) => {
   try {
     console.log('hello');
-    const { email, payee, remitter, note, amount, date } = req.body;
+    const { email, payee, remitter, note, amount } = req.body;
+    const date = getDateFormated();
     await pool
       .query(
         'insert into daily_transactions (email, payee, remitter, note, amount, date) values ($1, $2, $3, $4, $5, $6) returning *',
@@ -43,6 +44,7 @@ router.post('/daily/add', async (req, res) => {
 router.get('/daily/get/:id', async (req, res) => {
   try {
     const { id } = req.params;
+    console.log('hello', id);
     await pool
       .query('select * from daily_transactions where id=$1', [id])
       .then((item) => {

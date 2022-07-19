@@ -25,7 +25,7 @@ export const DailyContext = createContext<{
   allData: Data[];
   getAllData: () => void;
   addData: (modalData: { to: string; note: string; amount: string }) => void;
-  deleteData: () => void;
+  deleteData: (id: number) => void;
 }>({
   allData: [],
   getAllData: () => {},
@@ -75,7 +75,10 @@ export const DailyProvider: React.FC<DailyProvider> = ({ children }) => {
               console.log(item.data.data);
             });
         },
-        deleteData: () => {},
+        deleteData: async (id) => {
+          setAllData(allData.filter((data) => data.id !== id));
+          await axios.delete(`${url}/daily/delete/${id}`);
+        },
       }}
     >
       {children}

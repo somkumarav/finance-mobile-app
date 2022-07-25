@@ -7,7 +7,6 @@ const router = Express.Router();
 // Add A Transaction
 router.post('/daily/add', async (req, res) => {
   try {
-    console.log('hello');
     const { email, payee, remitter, note, amount } = req.body;
     const date = getDateFormated();
     await pool

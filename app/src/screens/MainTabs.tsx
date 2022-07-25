@@ -1,15 +1,14 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-import { PersonalTransactions } from '../components/PersonalTransactions';
 import { AppParamList } from '../AppParamList';
 import { Daily } from './Daily/Daily';
+import { Personal } from './Personal/Personal';
 
 const Tabs = createBottomTabNavigator<AppParamList>();
 
 export const MainTabs = () => {
   return (
     <Tabs.Navigator
-      initialRouteName="Daily"
+      initialRouteName="Personal"
       screenOptions={{
         header: () => null,
         tabBarIcon: () => null,
@@ -31,7 +30,7 @@ export const MainTabs = () => {
         },
       }}
     >
-      <Tabs.Screen name="Personal" component={PersonalTransactions} />
+      <Tabs.Screen name="Personal" component={Personal} />
       <Tabs.Screen name="Daily" component={Daily} />
     </Tabs.Navigator>
   );
